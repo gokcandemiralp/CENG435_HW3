@@ -37,8 +37,33 @@ read_nodeId = sys.argv[1]
 fd = open(f"{sys.argv[1]}.costs", "r")
 lineCount = 0
 nodeCount = 0
-
 tempNode = Node(int(read_nodeId))
+
+def route_distance_vector():
+    for edge in tempNode.edgesList:
+        destination = edge.toNode
+        edge_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            edge_s.connect((HOST, destination))
+        except ConnectionRefusedError:
+            continue
+
+        edge_s.sendall(b"deneme")
+        edge_s.close()
+
+# def listen_distance_vector():
+#     while True:
+#         try:
+#             conn, addr = self.sock.accept()
+#             data = conn.recv(2048)
+#             is_updated = self.update_distance_vector(data)
+#             if is_updated:
+#             self.sock.settimeout(5)
+#         except socket.timeout:
+#             self.print_distance_vector()
+#             self.sock.close()
+#             break
+    
 
 lines = fd.readlines()
 for line in lines:
@@ -56,13 +81,8 @@ for line in lines:
         destination = int(lineElements[0])
         distance = int(lineElements[1])
         tempNode.updateEdge(destination,distance)
-
-        edge_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            edge_s.connect((HOST, destination))
-        except ConnectionRefusedError:
-            continue 
     lineCount += 1
 
+route_distance_vector()
 
 tempNode.printNode()
