@@ -1,6 +1,7 @@
 import sys
 import socket
 INF = sys.maxsize
+HOST = "127.0.0.1"
 
 class Edge:
     toNode = None
@@ -15,6 +16,10 @@ class Node:
 
     def __init__(self,nodeId):
         self.nodeId = nodeId
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.bind((HOST,nodeId))
+        self.s.listen()
+        self.s.settimeout(5) 
 
     def updateEdge(self,u_nodeId,u_cost):
         for edge in self.edgesList:
@@ -35,21 +40,6 @@ nodeCount = 0
 
 tempNode = Node(int(read_nodeId))
 
-PORT = int(read_nodeId)
-HOST = "127.0.0.1"
-
-# with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-#     s.bind((HOST, PORT))
-#     s.listen()
-#     conn, addr = s.accept()
-#     with conn:
-#         print(f"Connected by {addr}")
-#         while True:
-#             data = conn.recv(1024)
-#             if not data:
-#                 break
-#             conn.sendall(data)
-
 lines = fd.readlines()
 for line in lines:
     if(lineCount == 0):
@@ -63,7 +53,16 @@ for line in lines:
     else:
         lineElements = line.split(' ')
         tempEdge = Edge()
-        tempNode.updateEdge(int(lineElements[0]),int(lineElements[1]))
+        destination = int(lineElements[0])
+        distance = int(lineElements[1])
+        tempNode.updateEdge(destination,distance)
+
+        edge_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            edge_s.connect((HOST, destination))
+        except ConnectionRefusedError:
+            continue 
     lineCount += 1
+
 
 tempNode.printNode()
