@@ -1,5 +1,6 @@
 import sys
 import socket
+import threading
 INF = sys.maxsize
 HOST = "127.0.0.1"
 
@@ -39,7 +40,7 @@ lineCount = 0
 nodeCount = 0
 tempNode = Node(int(read_nodeId))
 
-def route_distance_vector():
+def transmit_distance_vector():
     for edge in tempNode.edgesList:
         destination = edge.toNode
         edge_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,18 +52,22 @@ def route_distance_vector():
         edge_s.sendall(b"deneme")
         edge_s.close()
 
-# def listen_distance_vector():
-#     while True:
-#         try:
-#             conn, addr = self.sock.accept()
-#             data = conn.recv(2048)
-#             is_updated = self.update_distance_vector(data)
-#             if is_updated:
-#             self.sock.settimeout(5)
-#         except socket.timeout:
-#             self.print_distance_vector()
-#             self.sock.close()
-#             break
+def receive_distance_vector():
+    conn, addr = tempNode.s.accept()
+    data = conn.recv(2048)
+    print(data)
+
+    # while True:
+    #     try:
+    #         conn, addr = tempNode.s.accept()
+    #         data = conn.recv(2048)
+    #         is_updated = self.update_distance_vector(data)
+    #         if is_updated:
+    #             self.sock.settimeout(5)
+    #     except socket.timeout:
+    #         self.print_distance_vector()
+    #         self.sock.close()
+    #         break
     
 
 lines = fd.readlines()
@@ -83,6 +88,12 @@ for line in lines:
         tempNode.updateEdge(destination,distance)
     lineCount += 1
 
-route_distance_vector()
+transmitThread = threading.Thread(target=transmit_distance_vector, daemon=True)
+transmitThread.start()
+transmitThread.join()
+
+receiveThread = threading.Thread(target=receive_distance_vector, daemon=True)
+receiveThread.start()
+receiveThread.join()
 
 tempNode.printNode()
