@@ -49,25 +49,18 @@ def transmit_distance_vector():
         except ConnectionRefusedError:
             continue
 
-        edge_s.sendall(b"deneme")
+        edge_s.sendall(bytes(str(tempNode.nodeId), 'utf-8'))
         edge_s.close()
 
 def receive_distance_vector():
-    conn, addr = tempNode.s.accept()
-    data = conn.recv(2048)
-    print(data)
-
-    # while True:
-    #     try:
-    #         conn, addr = tempNode.s.accept()
-    #         data = conn.recv(2048)
-    #         is_updated = self.update_distance_vector(data)
-    #         if is_updated:
-    #             self.sock.settimeout(5)
-    #     except socket.timeout:
-    #         self.print_distance_vector()
-    #         self.sock.close()
-    #         break
+    tempNode.s.settimeout(6)
+    while True:
+        try:
+            conn, addr = tempNode.s.accept()
+            data = conn.recv(2048)
+            print(data)
+        except socket.timeout:
+            break
     
 
 lines = fd.readlines()
