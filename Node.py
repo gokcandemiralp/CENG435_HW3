@@ -1,6 +1,5 @@
 import sys
 import socket
-import threading
 INF = sys.maxsize
 HOST = "127.0.0.1"
 
