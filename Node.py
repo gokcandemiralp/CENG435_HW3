@@ -1,7 +1,7 @@
 import sys
 import socket
 import threading
-INF = 999
+INF = sys.maxsize
 HOST = "127.0.0.1"
 
 class Edge:
@@ -76,7 +76,6 @@ def update(nodeString):
         if(tempNode.getEdgeCost(targetNode) > newCost):
             tempNode.updateEdge(targetNode,newCost)
             isUpdated = True
-    print(isUpdated)
     return isUpdated
 
 def transmit_distance_vector():
@@ -99,7 +98,6 @@ def receive_distance_vector():
             conn, addr = tempNode.s.accept()
             data = conn.recv(2048).decode('utf-8')
             if(update(data)):
-                print(data)
                 transmit_distance_vector()
                 tempNode.s.settimeout(5)
         except socket.timeout:
