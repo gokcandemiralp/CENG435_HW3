@@ -127,11 +127,3 @@ for line in lines:
 
 transmit_distance_vector()
 receive_distance_vector()
-
-# transmitThread = threading.Thread(target=transmit_distance_vector, daemon=True)
-# transmitThread.start()
-# transmitThread.join()
-
-# receiveThread = threading.Thread(target=receive_distance_vector, daemon=True)
-# receiveThread.start()
-# receiveThread.join()
